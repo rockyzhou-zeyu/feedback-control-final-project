@@ -1,0 +1,35 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Python environments
+.venv/
+venv/
+.vendor/
+
+# LaTeX build byproducts
+presentation/*.aux
+presentation/*.fdb_latexmk
+presentation/*.fls
+presentation/*.log
+presentation/*.nav
+presentation/*.out
+presentation/*.snm
+presentation/*.toc
+presentation/*.vrb
+
+# Local scratch output
+/tmp/
+
+# Private / non-public project materials
+PRESENTATION_GUIDE.md
+PUBLISHING.md
+16_299_Project_Proposal.pdf
+16-299 Final Project.pdf
+presentation/
+presentation_assets/
+build_presentation.sh
+generate_presentation.py
+assets/results_dashboard.png
+assets/model_diagram.png
+assets/controller_diagram.png

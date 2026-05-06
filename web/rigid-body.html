@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fuller Rigid-Body Model</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="site-nav">
+        <a class="nav-brand" href="./overview.html">
+          <span class="nav-kicker">Snowboard Demo</span>
+          <strong>Model Appendix</strong>
+        </a>
+        <div class="nav-links">
+          <a href="./index.html">Live Demo</a>
+          <a class="active" href="./rigid-body.html">Rigid-Body Detail</a>
+          <a href="./sidecut-contact.html">Sidecut Detail</a>
+        </div>
+      </nav>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Appendix Detail</p>
+          <div class="page-tag">Rigid-Body Upgrade Sketch</div>
+          <h1>What A Fuller Rigid-Body Model Would Add</h1>
+          <p class="lede">
+            This page keeps the same snowboarding story but expands the body model from one planar
+            roll segment plus a hip joint into a multi-DOF rigid-body system with roll, pitch, yaw,
+            joint angles, and distributed contact loads.
+          </p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span class="metric-value">12-18</span>
+            <span class="metric-label">Typical State Dimensions</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">3</span>
+            <span class="metric-label">Attitude Axes: Roll, Pitch, Yaw</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">2-4</span>
+            <span class="metric-label">Contact Patches To Resolve</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Higher</span>
+            <span class="metric-label">Modeling And Compute Cost</span>
+          </article>
+        </div>
+      </header>
+
+      <main class="doc-grid">
+        <section class="doc-main">
+          <article class="panel doc-card">
+            <h2>Rigid-Body Layout</h2>
+            <p>
+              The left sketch shows a side-view body decomposition with pitch and roll-sensitive load
+              transfer. The right sketch shows the top-down yaw and front/rear contact structure that
+              the current planar model intentionally collapses away.
+            </p>
+            <canvas id="rigidBodyCanvas" width="1080" height="560"></canvas>
+            <p class="canvas-caption">
+              The diagram is illustrative: it shows what we would model next, not a second solver
+              already running in the browser.
+            </p>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Current Model vs Fuller Rigid-Body Model</h2>
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Current Page</th>
+                  <th>Rigid-Body Upgrade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Orientation</td>
+                  <td>Heading plus a planar lean state `phi`</td>
+                  <td>Full 3D attitude with roll, pitch, yaw and angular rates</td>
+                </tr>
+                <tr>
+                  <td>Body model</td>
+                  <td>Lower body + torso with one hip articulation `eta`</td>
+                  <td>Multiple linked rigid bodies with knee, ankle, hip, and torso motion</td>
+                </tr>
+                <tr>
+                  <td>Contact</td>
+                  <td>One effective grip scalar</td>
+                  <td>Front/rear edge loads, pressure distribution, possible slip at each patch</td>
+                </tr>
+                <tr>
+                  <td>Terrain interaction</td>
+                  <td>Disturbance moments and drag penalties</td>
+                  <td>Normal-force redistribution from bumps, pitch, and edge loading</td>
+                </tr>
+                <tr>
+                  <td>Usefulness</td>
+                  <td>Excellent for controller design and class presentation</td>
+                  <td>Better for realism, but much more tuning and identification work</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+        </section>
+
+        <aside class="doc-sidebar">
+          <article class="panel doc-card">
+            <h2>Added State Groups</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <strong>Translational DOFs</strong>
+                <span>`x, y, z` and their velocities if vertical motion matters.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Attitude DOFs</strong>
+                <span>Roll, pitch, yaw and the three body angular rates.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Joint Coordinates</strong>
+                <span>Hip, knee, ankle, or torso segments instead of one lumped hip angle.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Contact States</strong>
+                <span>Front/rear edge engagement, slip, and pressure distribution.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>What This Would Buy Us</h2>
+            <ul class="detail-list">
+              <li>Pitch-sensitive loading between nose and tail on steeper terrain.</li>
+              <li>Explicit yaw dynamics instead of treating edge upset as one disturbance channel.</li>
+              <li>Clearer interpretation of how upper-body counter-rotation affects board heading.</li>
+              <li>More faithful recovery behavior when terrain or contact changes asymmetrically.</li>
+            </ul>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Why We Did Not Start Here</h2>
+            <div class="warning-note">
+              This class project needs a stable, explainable controller more than a maximum-fidelity
+              rigid-body snow interaction model. The current planar page is the right baseline. This
+              page shows the next realism layer, not a replacement for the baseline.
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Good Upgrade Path</h2>
+            <div class="pill-row">
+              <span>Keep current path tracker</span>
+              <span>Add pitch and yaw states</span>
+              <span>Split contact into front/rear</span>
+              <span>Then re-tune control</span>
+            </div>
+          </article>
+        </aside>
+      </main>
+
+      <div class="page-footer">
+        <a href="./index.html">Back: Live Demo</a>
+        <span>Use this appendix page only if someone wants more detail on the rigid-body upgrade.</span>
+        <a href="./sidecut-contact.html">Next: Sidecut Contact</a>
+      </div>
+    </div>
+
+    <script src="./rigid-body.js"></script>
+  </body>
+</html>

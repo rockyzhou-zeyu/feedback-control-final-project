@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snowboard Carving Control Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero audience-hero">
+        <div class="hero-copy">
+          <div class="page-tag" id="scenarioTag">All-Mountain Carve</div>
+          <h1 id="heroTitle">Live Carve Tracking</h1>
+          <p class="lede">
+            Teal is the target path, orange is the realized carve, and the blue section marks reduced
+            grip. The live status chip highlights when a disturbance is active.
+          </p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span class="metric-value" id="rmseValue">--</span>
+            <span class="metric-label">RMS Lateral Error</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value" id="edgeValue">--</span>
+            <span class="metric-label">Peak Effective Edge</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value" id="torqueValue">--</span>
+            <span class="metric-label">Peak Hip Torque</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value" id="speedValue">--</span>
+            <span class="metric-label">Average Speed</span>
+          </article>
+        </div>
+      </header>
+
+      <section class="panel audience-toolbar">
+        <div class="toolbar-cluster">
+          <label class="control-label" for="scenarioSelect">Preset</label>
+          <select id="scenarioSelect"></select>
+        </div>
+
+        <div class="button-row audience-buttons">
+          <button id="playButton" type="button">Play</button>
+          <button id="restartButton" type="button" class="secondary">Restart</button>
+        </div>
+
+        <div class="toolbar-cluster toolbar-slider">
+          <label class="control-label" for="timeSlider">Timeline</label>
+          <input id="timeSlider" type="range" min="0" max="0" value="0" step="1" />
+        </div>
+
+        <div class="toolbar-summary">
+          <span id="timeLabel">0.00 s</span>
+          <div class="status-pill" id="statusPill">Ready</div>
+        </div>
+      </section>
+
+      <main class="audience-dashboard">
+        <section class="visual-column audience-visual-column">
+          <div class="panel scene-panel">
+            <div class="panel-head">
+              <h2>Carve View</h2>
+            </div>
+            <div class="legend-row">
+              <span class="legend-chip"><span class="legend-dot teal"></span>Target path</span>
+              <span class="legend-chip"><span class="legend-dot orange"></span>Actual path</span>
+              <span class="legend-chip"><span class="legend-dot ice"></span>Low-grip zone</span>
+              <span class="legend-chip"><span class="legend-dot gold"></span>Disturbance</span>
+              <span class="legend-chip"><span class="legend-dot recovery"></span>Recovery</span>
+            </div>
+            <canvas id="sceneCanvas" width="1120" height="640"></canvas>
+          </div>
+
+          <div class="audience-lower-row">
+            <div class="panel telemetry-panel">
+              <div class="panel-head">
+                <h2>Key Signals</h2>
+              </div>
+              <canvas id="telemetryCanvas" width="1120" height="250"></canvas>
+            </div>
+
+            <section class="panel live-panel audience-live-panel">
+              <h2>Live Readout</h2>
+              <dl class="live-grid">
+                <div>
+                  <dt>Speed</dt>
+                  <dd id="liveSpeed">--</dd>
+                </div>
+                <div>
+                  <dt>Lean</dt>
+                  <dd id="liveLean">--</dd>
+                </div>
+                <div>
+                  <dt>Torso</dt>
+                  <dd id="liveHip">--</dd>
+                </div>
+                <div>
+                  <dt>Edge Angle</dt>
+                  <dd id="liveEdge">--</dd>
+                </div>
+                <div>
+                  <dt>Path Error</dt>
+                  <dd id="liveError">--</dd>
+                </div>
+                <div>
+                  <dt>Hip Torque</dt>
+                  <dd id="liveTorque">--</dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./demo_data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

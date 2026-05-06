@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Model Settings</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="site-nav">
+        <a class="nav-brand" href="./settings.html">
+          <span class="nav-kicker">Snowboard Demo</span>
+          <strong>Presentation Flow</strong>
+        </a>
+        <div class="nav-links">
+          <a href="./overview.html">Overview</a>
+          <a class="active" href="./settings.html">Model Setup</a>
+          <a href="./index.html">Live Demo</a>
+          <a href="./extensions.html">Appendix</a>
+        </div>
+      </nav>
+
+      <div class="flow-strip">
+        <a class="flow-step" href="./overview.html"><span class="flow-index">1</span>Overview</a>
+        <a class="flow-step active" href="./settings.html"><span class="flow-index">2</span>Model Setup</a>
+        <a class="flow-step" href="./index.html"><span class="flow-index">3</span>Live Demo</a>
+        <a class="flow-step" href="./extensions.html"><span class="flow-index">4</span>Appendix</a>
+      </div>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Slide 2</p>
+          <div class="page-tag">Model Intuition</div>
+          <h1>Why The Hip Joint Matters</h1>
+          <p class="lede" id="settingsSubtitle">
+            Use this page for the short setup: mass split, alpha, nominal carve, and the limits that
+            keep the controller honest.
+          </p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span class="metric-value" id="metricSlope">--</span>
+            <span class="metric-label">Slope</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value" id="metricSpeed">--</span>
+            <span class="metric-label">Trim Speed</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value" id="metricMass">--</span>
+            <span class="metric-label">System Mass</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value" id="metricAlpha">--</span>
+            <span class="metric-label">Alpha</span>
+          </article>
+        </div>
+      </header>
+
+      <main class="doc-grid">
+        <section class="doc-main">
+          <article class="panel doc-card">
+            <h2>Preset</h2>
+            <label class="control-label" for="settingsScenarioSelect">Slope Preset</label>
+            <select id="settingsScenarioSelect"></select>
+            <p class="control-note" id="settingsDescription"></p>
+            <div class="pill-row" id="settingsPills"></div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Rider Sketch</h2>
+            <div class="formula-chip">theta_eff = phi + alpha eta</div>
+            <canvas id="settingsCanvas" width="1080" height="480"></canvas>
+          </article>
+        </section>
+
+        <aside class="doc-sidebar">
+          <article class="panel doc-card">
+            <h2>Reference</h2>
+            <div class="spec-grid" id="operatingGrid"></div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Mass Split</h2>
+            <div class="spec-grid" id="massGrid"></div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Limits</h2>
+            <div class="spec-grid" id="limitsGrid"></div>
+          </article>
+        </aside>
+      </main>
+
+      <div class="page-footer">
+        <a href="./overview.html">Back: Overview</a>
+        <span>After this page, let the simulation do most of the talking.</span>
+        <a href="./index.html">Next: Live Demo</a>
+      </div>
+    </div>
+
+    <script src="./demo_data.js"></script>
+    <script src="./settings.js"></script>
+  </body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sidecut Contact Model</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="site-nav">
+        <a class="nav-brand" href="./overview.html">
+          <span class="nav-kicker">Snowboard Demo</span>
+          <strong>Model Appendix</strong>
+        </a>
+        <div class="nav-links">
+          <a href="./index.html">Live Demo</a>
+          <a href="./rigid-body.html">Rigid-Body Detail</a>
+          <a class="active" href="./sidecut-contact.html">Sidecut Detail</a>
+        </div>
+      </nav>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Appendix Detail</p>
+          <div class="page-tag">Sidecut-Contact Upgrade Sketch</div>
+          <h1>What A Sidecut-Contact Model Would Look Like</h1>
+          <p class="lede">
+            Instead of using one effective curvature relation, a sidecut-contact model resolves how
+            the shaped board edge engages the snow, how contact length changes with edge angle and
+            load, and how that geometry produces a carved turn radius.
+          </p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span class="metric-value">Top + Cross</span>
+            <span class="metric-label">Need Plan View And Edge View</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Sidecut</span>
+            <span class="metric-label">Board Outline Now Matters</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Contact Arc</span>
+            <span class="metric-label">Changes With Load And Edge Angle</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">High</span>
+            <span class="metric-label">Sensitivity To Snow Conditions</span>
+          </article>
+        </div>
+      </header>
+
+      <main class="doc-grid">
+        <section class="doc-main">
+          <article class="panel doc-card">
+            <h2>Sidecut And Contact Sketch</h2>
+            <p>
+              The left side shows a top-down board with a sidecut radius and edge contact points.
+              The right side shows a local snow cross-section where edge angle and penetration set
+              how much of the edge really bites into the snow.
+            </p>
+            <canvas id="sidecutCanvas" width="1080" height="560"></canvas>
+            <p class="canvas-caption">
+              This page is an explanatory geometry diagram. It is meant to show the next model layer
+              we could implement after the current controller baseline.
+            </p>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>What Changes Relative To The Current Curvature Law</h2>
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Current Page</th>
+                  <th>Sidecut-Contact Upgrade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Turn geometry</td>
+                  <td>`kappa` comes from effective edge angle and speed</td>
+                  <td>`kappa` emerges from sidecut radius, edge angle, and real contact length</td>
+                </tr>
+                <tr>
+                  <td>Snow interaction</td>
+                  <td>One grip coefficient</td>
+                  <td>Edge penetration, contact pressure, and possible local slip</td>
+                </tr>
+                <tr>
+                  <td>Board shape</td>
+                  <td>Implicitly hidden</td>
+                  <td>Explicit nose, waist, tail, and sidecut geometry</td>
+                </tr>
+                <tr>
+                  <td>Failure modes</td>
+                  <td>Grip loss patch or disturbance</td>
+                  <td>Partial washout, over-engagement, short contact, or nose/tail overload</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+        </section>
+
+        <aside class="doc-sidebar">
+          <article class="panel doc-card">
+            <h2>Core Variables</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <strong>Sidecut Radius</strong>
+                <span>Sets the nominal carved arc of the board geometry itself.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Edge Angle</strong>
+                <span>Controls how deeply the edge is presented to the snow.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Normal Load</strong>
+                <span>Determines how much of the edge can stay engaged without washing out.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Contact Length</strong>
+                <span>The effective edge is shorter than the full board and varies with conditions.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Reasonable First Approximation</h2>
+            <div class="callout">
+              A sidecut-contact model often starts from geometry like
+              <strong>`R_turn ≈ R_sidecut * cos(beta)`</strong> and then adds compliance, load
+              transfer, and slip limits. That is the kind of page-level upgrade this diagram is
+              trying to make visible.
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Why This Matters</h2>
+            <ul class="detail-list">
+              <li>It explains why the same lean can carve differently on hardpack vs softer snow.</li>
+              <li>It gives a path to model nose/tail chatter or partial edge release.</li>
+              <li>It ties board design choices directly to the resulting turn radius.</li>
+              <li>It would make the “low-grip patch” effect physically grounded instead of lumped.</li>
+            </ul>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Suggested Build Order</h2>
+            <div class="pill-row">
+              <span>Add sidecut radius</span>
+              <span>Add contact length</span>
+              <span>Add edge penetration</span>
+              <span>Then add slip limits</span>
+            </div>
+          </article>
+        </aside>
+      </main>
+
+      <div class="page-footer">
+        <a href="./rigid-body.html">Previous: Rigid-Body Detail</a>
+        <span>Use this appendix page only if someone asks how the lumped grip law could become a geometry-based contact model.</span>
+        <a href="./index.html">Back To Live Demo</a>
+      </div>
+    </div>
+
+    <script src="./sidecut-contact.js"></script>
+  </body>
+</html>

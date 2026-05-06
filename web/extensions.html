@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extensions</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="site-nav">
+        <a class="nav-brand" href="./overview.html">
+          <span class="nav-kicker">Snowboard Demo</span>
+          <strong>Presentation Flow</strong>
+        </a>
+        <div class="nav-links">
+          <a href="./overview.html">Overview</a>
+          <a href="./settings.html">Model Setup</a>
+          <a href="./index.html">Live Demo</a>
+          <a class="active" href="./extensions.html">Appendix</a>
+        </div>
+      </nav>
+
+      <div class="flow-strip">
+        <a class="flow-step" href="./overview.html"><span class="flow-index">1</span>Overview</a>
+        <a class="flow-step" href="./settings.html"><span class="flow-index">2</span>Model Setup</a>
+        <a class="flow-step" href="./index.html"><span class="flow-index">3</span>Live Demo</a>
+        <a class="flow-step active" href="./extensions.html"><span class="flow-index">4</span>Appendix</a>
+      </div>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Slide 4</p>
+          <div class="page-tag">Appendix</div>
+          <h1>What Comes After The Baseline</h1>
+          <p class="lede">
+            Use this page only after the live demo lands. The baseline is already doing its job; this
+            page is just the roadmap.
+          </p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span class="metric-value">Upgrade 1</span>
+            <span class="metric-label">Fuller Rigid-Body Dynamics</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Upgrade 2</span>
+            <span class="metric-label">Sidecut + Contact Geometry</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Control</span>
+            <span class="metric-label">Gain Scheduling, MPC, Or RL Comparison</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Message</span>
+            <span class="metric-label">Baseline First, Fidelity Next</span>
+          </article>
+        </div>
+      </header>
+
+      <main class="doc-grid">
+        <section class="doc-main">
+          <article class="panel doc-card">
+            <h2>Two Clean Next Steps</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <strong>Fuller Rigid-Body Model</strong>
+                <span>Add pitch, yaw, richer body segments, and front/rear load transfer.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Sidecut-Contact Model</strong>
+                <span>Replace the lumped grip law with board geometry, contact length, and snow sensitivity.</span>
+              </div>
+              <div class="stat-card">
+                <strong>What Stays The Same</strong>
+                <span>The control goal is still stable carve tracking under disturbances.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Why Not First</strong>
+                <span>More fidelity would have raised modeling and tuning cost before we had a clean baseline.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Control Follow-Up</h2>
+            <div class="pill-row">
+              <span>Add pitch and yaw states</span>
+              <span>Split front and rear contact</span>
+              <span>Derive curvature from sidecut geometry</span>
+              <span>Try gain scheduling or MPC</span>
+              <span>Compare with RL only after the baseline is solid</span>
+            </div>
+          </article>
+        </section>
+
+        <aside class="doc-sidebar">
+          <article class="panel doc-card">
+            <h2>Talk Line</h2>
+            <div class="callout">
+              This project intentionally starts with the simplest model that still exposes a real
+              control problem. The next steps make the model more realistic, not more legitimate.
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Appendix Detail Pages</h2>
+            <div class="lead-card-grid single-column">
+              <a class="lead-link-card" href="./rigid-body.html">
+                <strong>Rigid-Body Detail</strong>
+                <span>More visual detail on added states, axes, and front/rear load transfer.</span>
+              </a>
+              <a class="lead-link-card" href="./sidecut-contact.html">
+                <strong>Sidecut-Contact Detail</strong>
+                <span>Geometry sketch for how board shape and contact could replace the lumped grip story.</span>
+              </a>
+            </div>
+          </article>
+        </aside>
+      </main>
+
+      <div class="page-footer">
+        <a href="./index.html">Back: Live Demo</a>
+        <span>Use this page only if you want a short roadmap or need extra technical depth.</span>
+        <a href="./overview.html">Back To Overview</a>
+      </div>
+    </div>
+  </body>
+</html>

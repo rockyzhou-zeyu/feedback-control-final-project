@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snowboard Project Overview</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="site-nav">
+        <a class="nav-brand" href="./overview.html">
+          <span class="nav-kicker">Snowboard Demo</span>
+          <strong>Presentation Flow</strong>
+        </a>
+        <div class="nav-links">
+          <a class="active" href="./overview.html">Overview</a>
+          <a href="./settings.html">Model Setup</a>
+          <a href="./index.html">Live Demo</a>
+          <a href="./extensions.html">Appendix</a>
+        </div>
+      </nav>
+
+      <div class="flow-strip">
+        <a class="flow-step active" href="./overview.html"><span class="flow-index">1</span>Overview</a>
+        <a class="flow-step" href="./settings.html"><span class="flow-index">2</span>Model Setup</a>
+        <a class="flow-step" href="./index.html"><span class="flow-index">3</span>Live Demo</a>
+        <a class="flow-step" href="./extensions.html"><span class="flow-index">4</span>Appendix</a>
+      </div>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Slide 1</p>
+          <div class="page-tag">Project Snapshot</div>
+          <h1>Goals, Plan, Current State, Result</h1>
+          <p class="lede">
+            A control-first snowboard demo: explain the model quickly, then let the live run prove
+            tracking, limits, and disturbance recovery.
+          </p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span class="metric-value">Goal</span>
+            <span class="metric-label">Track A Moving Carve Stably</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Model</span>
+            <span class="metric-label">Weighted-Hip Planar Rider</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Current</span>
+            <span class="metric-label">LQR + Limits + Disturbances</span>
+          </article>
+          <article class="metric-card">
+            <span class="metric-value">Result</span>
+            <span class="metric-label">Stable Tracking In Browser Demo</span>
+          </article>
+        </div>
+      </header>
+
+      <main class="doc-grid">
+        <section class="doc-main">
+          <article class="panel doc-card">
+            <h2>Talk In One Sentence</h2>
+            <div class="callout">
+              We control a simplified snowboard-rider system so it follows a desired carve while
+              staying stable through a gust, an edge upset, and a low-grip patch.
+            </div>
+            <div class="pill-row">
+              <span>Control project first</span>
+              <span>theta_eff = phi + alpha eta</span>
+              <span>Physically interpretable</span>
+              <span>Live evidence over long text</span>
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Recommended Demo Flow</h2>
+            <div class="lead-card-grid">
+              <a class="lead-link-card" href="./settings.html">
+                <strong>1. Model Setup</strong>
+                <span>Use one minute to explain the mass split, alpha, nominal carve, and limits.</span>
+              </a>
+              <a class="lead-link-card" href="./index.html">
+                <strong>2. Live Evidence</strong>
+                <span>Show teal versus orange, call out the blue grip patch, then point to bounded signals.</span>
+              </a>
+              <a class="lead-link-card" href="./extensions.html">
+                <strong>3. Appendix If Asked</strong>
+                <span>Use extensions only to show the roadmap after the baseline has already landed.</span>
+              </a>
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>What The Audience Should Learn</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <strong>Goal</strong>
+                <span>The board should track a moving carve, not just balance near one point.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Intuition</strong>
+                <span>Hip motion matters because torso motion changes inertia and effective edge angle.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Current State</strong>
+                <span>The baseline is already complete enough to tune, explain, and demonstrate live.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Expected Outcome</strong>
+                <span>The audience sees recovery through disturbances without unbounded torque or posture.</span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <aside class="doc-sidebar">
+          <article class="panel doc-card">
+            <h2>Current Implementation</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <strong>8-State Model</strong>
+                <span>x, y, psi, speed, lean phi, lean rate, hip eta, and hip rate.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Hip Torque Input</strong>
+                <span>The controller acts through torso motion, not direct steering.</span>
+              </div>
+              <div class="stat-card">
+                <strong>3 Disturbance Channels</strong>
+                <span>Low grip, gust-induced roll upset, and a short yaw-edge upset.</span>
+              </div>
+              <div class="stat-card">
+                <strong>3 Presets</strong>
+                <span>Blue Groomer, All-Mountain Carve, and Steep Technical.</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel doc-card">
+            <h2>Current Default Result</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <strong>0.193 m</strong>
+                <span>RMS lateral tracking error.</span>
+              </div>
+              <div class="stat-card">
+                <strong>96.5 Nm</strong>
+                <span>Peak hip torque with saturation.</span>
+              </div>
+              <div class="stat-card">
+                <strong>17.5 deg</strong>
+                <span>Peak effective edge angle.</span>
+              </div>
+              <div class="stat-card">
+                <strong>Stable</strong>
+                <span>Lean and hip remain within the modeled limits.</span>
+              </div>
+            </div>
+          </article>
+        </aside>
+      </main>
+
+      <div class="page-footer">
+        <span>Next, explain the model with the shortest useful setup page.</span>
+        <a href="./settings.html">Next: Model Setup</a>
+      </div>
+    </div>
+  </body>
+</html>

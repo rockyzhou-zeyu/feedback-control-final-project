@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snowboard Carving Control With a Weighted Hip Joint</title>
+    <meta
+      name="description"
+      content="Final project report for a snowboard carving simulator with weighted hip-joint dynamics and saturation-limited LQR control."
+    />
+    <link rel="stylesheet" href="./report.css" />
+  </head>
+  <body>
+    <header class="report-hero">
+      <img
+        src="./assets/carve_tracking.gif"
+        alt="Animated simulation of the actual snowboard carve tracking the reference path through a low-grip section"
+      />
+      <div class="hero-shade"></div>
+      <nav class="site-nav" aria-label="Project links">
+        <a href="./index.html">Report</a>
+        <a href="./web/index.html">Live Demo</a>
+        <a href="./README.md">Code Guide</a>
+      </nav>
+      <div class="hero-copy">
+        <p class="course">16-299 Final Project</p>
+        <h1>Snowboard Carving Control With a Weighted Hip Joint</h1>
+        <p>
+          A planar carving simulator, a physically interpretable rider model, and a
+          saturation-limited LQR controller for tracking a downhill carve through disturbances.
+        </p>
+      </div>
+    </header>
+
+    <main>
+      <section class="summary-band" aria-label="Project summary metrics">
+        <div>
+          <strong>0.202 m</strong>
+          <span>default RMS lateral error</span>
+        </div>
+        <div>
+          <strong>17.5&deg;</strong>
+          <span>default peak effective edge angle</span>
+        </div>
+        <div>
+          <strong>96.5 Nm</strong>
+          <span>default peak hip torque</span>
+        </div>
+        <div>
+          <strong>3</strong>
+          <span>slope and disturbance presets</span>
+        </div>
+      </section>
+
+      <article class="report">
+        <section id="abstract">
+          <h2>Abstract</h2>
+          <p>
+            This project studies a snowboard-inspired trajectory tracking problem: can a simplified
+            rider-board system follow a desired carving path while staying stable under limited
+            actuation, terrain variation, and disturbances? I built a planar simulation in Python and
+            a browser visualization that show the reference path, realized path, rider posture,
+            control input, and disturbance signals. The model has eight states: downhill and
+            cross-slope position, heading, speed, lower-body roll angle and roll rate, and torso hip
+            angle and hip rate. The controller is a discrete-time LQR with an added integral state
+            for lateral tracking error, feedforward shaping from the reference curvature, and hard
+            saturation on hip torque. In the default all-mountain scenario, the controller tracks the
+            carve with 0.202 m RMS lateral error, 17.5 degrees peak effective edge angle, and 96.5 Nm
+            peak torque while remaining within the modeled roll and hip limits.
+          </p>
+        </section>
+
+        <figure class="wide-figure animation-figure">
+          <img
+            src="./assets/carve_tracking.gif"
+            alt="Animated All-Mountain simulation showing the orange actual carve following the teal reference path"
+          />
+          <figcaption>
+            Figure 1. The All-Mountain preset shows the actual path tracking the reference carve,
+            passing through a low-grip zone, and recovering after short disturbances.
+          </figcaption>
+        </figure>
+
+        <section id="background">
+          <h2>Introduction and Motivation</h2>
+          <p>
+            Snowboarding is interesting as a control problem because the goal is not merely to stay
+            upright. A rider must choose a moving line, create edge angle, manage speed, and recover
+            when snow or body motion pushes the board away from the intended path. A fully realistic
+            snowboard simulator would require three-dimensional multibody dynamics and detailed
+            snow-edge contact mechanics. That would be valuable, but it would also make the project
+            difficult to tune and evaluate in one semester. I therefore chose a control-oriented
+            abstraction that keeps the essential feedback problem visible: a rider follows a smooth
+            downhill carve using hip torque while the simulated board experiences reduced grip, a
+            gust-like roll upset, and a short yaw upset.
+          </p>
+          <p>
+            The final deliverable has two parts. The Python package in <code>snowboard_sim/</code>
+            contains the dynamics, controller, simulation loop, metrics, and data export. The static
+            browser demo in <code>web/</code> renders the resulting trajectories and telemetry with
+            HTML canvas animation. This split made iteration fast: the model can be regenerated with
+            one Python command, and the visualizer can be opened directly in a browser or served by
+            GitHub Pages.
+          </p>
+        </section>
+
+        <section id="model">
+          <h2>Planar Rider and Carving Model</h2>
+          <p>
+            The model is intentionally planar. The state is
+            <code>[x, y, psi, v, phi, phi_dot, eta, eta_dot]</code>, where <code>x</code> is downhill
+            position, <code>y</code> is cross-slope position, <code>psi</code> is heading,
+            <code>v</code> is speed, <code>phi</code> is lower-body and board roll, and
+            <code>eta</code> is the torso angle relative to the lower body. The reference path is a
+            smooth sinusoidal carving line <code>y_ref(x)</code>, so desired heading and curvature
+            come from path geometry instead of a manually prescribed steering signal.
+          </p>
+          <p>
+            The central modeling choice is the effective edge angle:
+            <code>theta_eff = phi + alpha eta</code>. The coefficient <code>alpha</code> is computed
+            from the upper-body center-of-mass contribution relative to the total rider-board
+            moment. This gives the hip joint a real role in the simulation. Torso articulation is not
+            cosmetic; it changes the edge angle used in the curvature law and feeds back into roll
+            through the hip-to-roll stiffness term. The carve curvature is
+            <code>kappa = grip g tan(theta_eff) / v^2</code>, which captures three useful effects:
+            higher edge angle turns more sharply, higher speed reduces curvature for the same edge
+            angle, and poor grip weakens edge authority.
+          </p>
+          <div class="concept-row" aria-label="Effective edge angle composition">
+            <div class="concept-card">
+              <strong>phi</strong>
+              <span>board and lower-body lean</span>
+            </div>
+            <div class="concept-operator">+</div>
+            <div class="concept-card">
+              <strong>alpha eta</strong>
+              <span>weighted torso contribution</span>
+            </div>
+            <div class="concept-operator">=</div>
+            <div class="concept-card concept-result">
+              <strong>theta_eff</strong>
+              <span>edge angle used for curvature</span>
+            </div>
+          </div>
+          <p>
+            The roll equation includes gravitational restoring stiffness, damping, hip coupling,
+            terrain roll moment, and a gust impulse. The hip equation includes commanded torque,
+            damping, passive hip stiffness, and cross-coupling from roll. State limits clip speed,
+            lower-body roll, and hip angle to keep the simulated motion inside the intended physical
+            range. The result is not a high-fidelity snowboard mechanics model, but it is a coherent
+            control plant with interpretable mass distribution, actuation limits, and disturbance
+            channels.
+          </p>
+        </section>
+
+        <section id="controller">
+          <h2>Controller and Implementation</h2>
+          <p>
+            The controller is a saturation-limited LQR built around a linearized tracking model. I
+            used a seven-state augmented controller state: integral of lateral error, lateral error,
+            heading error, roll error, roll-rate error, hip-angle error, and hip-rate error. The
+            continuous linear model is discretized at the simulation time step of 0.02 s. The
+            feedback gain is computed by solving the discrete algebraic Riccati equation, with larger
+            weights on heading, lateral error, and hip-rate regulation and a scalar penalty on torque.
+          </p>
+          <div class="flow-row" aria-label="Controller data flow">
+            <div class="flow-card">reference path</div>
+            <div class="flow-arrow">-&gt;</div>
+            <div class="flow-card">feedforward posture</div>
+            <div class="flow-plus">+</div>
+            <div class="flow-card">LQR correction</div>
+            <div class="flow-arrow">-&gt;</div>
+            <div class="flow-card">torque limit</div>
+            <div class="flow-arrow">-&gt;</div>
+            <div class="flow-card flow-result">simulated carve</div>
+          </div>
+          <p>
+            A pure feedback controller initially worked on gentle turns but produced unnecessary
+            torque during sharper sections of the reference. The final version therefore computes a
+            feedforward posture from the path curvature, then uses LQR feedback to reject errors
+            around that posture. The raw torque command is clipped to +/-120 Nm. When clipping
+            occurs, the integral state is slightly relaxed so the controller does not keep winding up
+            against an unreachable torque. This simple anti-windup step was enough for the current
+            disturbances and made the browser telemetry easier to interpret.
+          </p>
+          <p>
+            The implementation lives in three main files. <code>model.py</code> defines the physical
+            parameters, reference state, disturbances, dynamics, and fourth-order Runge-Kutta
+            integration. <code>controller.py</code> constructs the tracking model and LQR gain.
+            <code>pipeline.py</code> runs scenarios, computes metrics, and exports a JavaScript data
+            bundle consumed by the browser demo. Keeping the simulation export deterministic made it
+            straightforward to compare controller changes across the same disturbance sequence.
+          </p>
+        </section>
+
+        <section id="evaluation">
+          <h2>Evaluation and Results</h2>
+          <p>
+            I evaluated the controller on three presets. Blue Groomer uses a milder slope, wider
+            turns, and smaller disturbances. All-Mountain Carve is the default balanced case. Steep
+            Technical increases slope pitch, path tightness, and disturbance strength. For each run I
+            report RMS lateral error, peak roll angle, peak hip angle, peak effective edge angle,
+            peak torque, control energy, average speed, and whether roll and hip remain within their
+            modeled limits.
+          </p>
+          <div class="table-wrap" role="region" aria-label="Scenario results">
+            <table>
+              <thead>
+                <tr>
+                  <th>Preset</th>
+                  <th>RMS error</th>
+                  <th>Peak edge</th>
+                  <th>Peak torque</th>
+                  <th>Average speed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Blue Groomer</td>
+                  <td>0.148 m</td>
+                  <td>9.4&deg;</td>
+                  <td>63.2 Nm</td>
+                  <td>7.19 m/s</td>
+                  <td>stable</td>
+                </tr>
+                <tr>
+                  <td>All-Mountain Carve</td>
+                  <td>0.202 m</td>
+                  <td>17.5&deg;</td>
+                  <td>96.5 Nm</td>
+                  <td>7.09 m/s</td>
+                  <td>stable</td>
+                </tr>
+                <tr>
+                  <td>Steep Technical</td>
+                  <td>0.219 m</td>
+                  <td>18.8&deg;</td>
+                  <td>109.7 Nm</td>
+                  <td>8.09 m/s</td>
+                  <td>stable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The results are reasonable for the intended model. Error rises as the scenario becomes
+            harder, torque approaches but does not exceed the saturation limit, and the effective
+            edge angle stays below the 28 degree limit. The live demo also validates timing and
+            recovery qualitatively: tracking error spikes near the gust, edge upset, and low-grip
+            region, then returns toward the reference rather than diverging. The browser view was
+            useful because the most important failure modes were visual. If the board crossed the
+            reference at the wrong phase, if torque stayed pinned at saturation, or if hip and roll
+            moved in physically confusing directions, those problems were visible immediately.
+          </p>
+        </section>
+
+        <section id="reflections">
+          <h2>Reflections</h2>
+          <p>
+            The main thing that worked was starting with a simple, explainable baseline. Earlier
+            ideas included a richer rigid-body snowboard model and a possible reinforcement learning
+            comparison. Those ideas are attractive, but they would have made debugging harder before
+            there was a trusted plant and metric bundle. LQR was a good match for this stage because
+            it gave a principled feedback controller, exposed the tuning tradeoff between tracking
+            and effort, and made it easy to reason about errors in the linearized coordinates.
+          </p>
+          <p>
+            The most difficult part was balancing physical meaning against controllability. If hip
+            articulation mattered too little, the torso joint became only an animation detail. If it
+            mattered too much, the simulated rider could steer unrealistically with small torso
+            motions. The current <code>alpha</code> and hip-to-roll coupling are a compromise that
+            keeps the control story legible while preserving bounded posture. Another challenge was
+            evaluation. A single successful animation was not convincing, so I added multiple
+            presets, explicit disturbances, and metrics that can be regenerated from code.
+          </p>
+          <p>
+            The largest limitation is model fidelity. Snowboard carving depends on edge geometry,
+            contact length, snow deformation, pitch, yaw, and front-rear load transfer. This project
+            compresses those effects into a lumped grip and curvature law. The next best extension
+            would be a sidecut-contact model that computes curvature from board geometry and
+            pressure distribution. After that, gain scheduling or MPC would be natural controller
+            upgrades because the current LQR is tuned around one nominal speed and plant.
+          </p>
+        </section>
+
+        <section id="conclusion">
+          <h2>Conclusion</h2>
+          <p>
+            The project achieved its baseline objective: it turns a snowboard-inspired physical
+            setting into a measurable trajectory-tracking control problem, implements a controller
+            that behaves sensibly under disturbances, and presents the results through a reproducible
+            simulation and static web demo. The implementation is simple enough to inspect but rich
+            enough to show why rider mass distribution, hip actuation, torque saturation, and snow
+            grip matter. The strongest future path is to keep the current evaluation harness and
+            replace pieces of the plant with more realistic contact dynamics one at a time.
+          </p>
+        </section>
+
+        <section id="references">
+          <h2>References</h2>
+          <ol class="references">
+            <li>
+              Caillaud, B., Winkler, R., Oberguggenberger, M., Luger, M., and Gerstmayr, J.
+              <a href="https://doi.org/10.1007/s12283-019-0307-4">Static model of a snowboard undergoing a carved turn: validation by full-scale test</a>.
+              <em>Sports Engineering</em>, 2019.
+            </li>
+            <li>
+              Caillaud, B. and Gerstmayr, J.
+              <a href="https://doi.org/10.1007/s12283-022-00380-7">Shape optimization of a snowboard sidecut geometry</a>.
+              <em>Sports Engineering</em>, 2022.
+            </li>
+            <li>
+              Fuss, F. K.
+              <a href="https://doi.org/10.3390/applmech3030059">Vibrations Affecting Stability and Edge Control of Snowboards</a>.
+              <em>Applied Mechanics</em>, 2022.
+            </li>
+            <li>
+              Komissarov, S. S.
+              <a href="https://doi.org/10.1080/14763141.2020.1795236">Balanced carving turns in alpine skiing</a>.
+              <em>Sports Biomechanics</em>, 2020.
+            </li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>
